@@ -140,10 +140,17 @@ class DICBuilder
         $cmdLine   = $this->athletic['cmdLine'];
         $formatter = $cmdLine->getFormatter();
 
-        if (isset($formatter) === true) {
-            $this->athletic['formatterClass'] = "\\Athletic\\Formatters\\$formatter";
-        } else {
+        // use default formatter if --formatter option is empty
+        if( empty($formatter) ){
             $this->athletic['formatterClass'] = '\Athletic\Formatters\DefaultFormatter';
+        }
+        // use absolute namespace if class name begins "\"
+        else if( '\\' === $formatter{0} ){
+            $this->athletic['formatterClass'] = $formatter;
+        }
+        // use relative namespace to Athletic\Formatters
+        else {
+            $this->athletic['formatterClass'] = "\\Athletic\\Formatters\\$formatter";
         }
 
         $this->athletic['formatter'] = function ($dic) {
